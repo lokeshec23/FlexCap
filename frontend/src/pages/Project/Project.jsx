@@ -11,6 +11,9 @@ import Box from "@mui/material/Box";
 import NewUser from "../../component/NewUser";
 import AddProject from "../../component/AddProject";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import Avatar from "@mui/material/Avatar";
+import Chip from "@mui/material/Chip";
+import EditIcon from "@mui/icons-material/Edit";
 
 const Project = () => {
   const { ishaveCompany, setIsHaveCompany, isLoading } =
@@ -20,6 +23,7 @@ const Project = () => {
     addProject: false,
   });
   const [projectDetails, setProjectDetails] = React.useState([]);
+  const [editData, setEditData] = React.useState({});
 
   React.useEffect(() => {
     const getinitData = async () => {
@@ -41,11 +45,47 @@ const Project = () => {
   };
 
   const handleModalOpen = () => {
+    setEditData(undefined);
     setModalOpen((prev) => ({ ...prev, addProject: true }));
   };
 
+  const handleEdit = (projectId) => {
+    debugger;
+    let filterData = projectDetails.find(
+      (project) => project["_id"] === projectId
+    );
+    console.log(filterData);
+    let {
+      projectName,
+      projectKey,
+      projectDescription,
+      projectStartDate,
+      projectEndDate,
+      teamLead,
+      teamMember,
+      listedteamLead,
+      listeteamMember,
+      _id,
+    } = filterData;
+    let setObject = {
+      projectName,
+      projectKey,
+      projectDescription,
+      projectStartDate,
+      projectEndDate,
+      teamLead,
+      teamMember,
+      listedteamLead,
+      listeteamMember,
+      _id,
+    };
+    setEditData(setObject);
+    setTimeout(() => {
+      setModalOpen((prev) => ({ ...prev, addProject: true }));
+    }, 0);
+  };
   const getProjectCard = () => {
-    console.log("prj", projectDetails);
+    // console.log("prj", projectDetails);
     return (
       <>
         {projectDetails &&
@@ -54,7 +94,10 @@ const Project = () => {
               <div key={card._id} className="card-box">
                 <div className="cardName-Editbutton">
                   <p className="card-header">{card.projectName}</p>
-                  <button className="editbtn">Edit</button>
+                  <EditIcon
+                    className="editbtn"
+                    onClick={() => handleEdit(card["_id"])}
+                  />
                 </div>
                 <hr className="line" />
                 <div>
@@ -74,19 +117,37 @@ const Project = () => {
                 </div>
                 <div>
                   <strong>Team Lead</strong>
-                  <div>
+                  <div className="card-tl-space">
                     {card.teamLead &&
                       card.teamLead.map((TL) => {
-                        return <span>{TL}</span>;
+                        return (
+                          <>
+                            <Chip
+                              avatar={
+                                <Avatar>{TL.toUpperCase().charAt(0)}</Avatar>
+                              }
+                              label={TL}
+                            />
+                          </>
+                        );
                       })}
                   </div>
                 </div>
                 <div>
                   <strong>Team Members</strong>
-                  <div>
+                  <div className="card-tl-space">
                     {card.teamMember &&
                       card.teamMember.map((TL) => {
-                        return <span>{TL}</span>;
+                        return (
+                          <>
+                            <Chip
+                              avatar={
+                                <Avatar>{TL.toUpperCase().charAt(0)}</Avatar>
+                              }
+                              label={TL}
+                            />
+                          </>
+                        );
                       })}
                   </div>
                 </div>
@@ -135,7 +196,13 @@ const Project = () => {
           <div className="card-outer-div">{getProjectCard()}</div>
         )}
       </div>
-      {modalOpen.addProject && <AddProject closeModal={setModalOpen} />}
+      {modalOpen.addProject && (
+        <AddProject
+          closeModal={setModalOpen}
+          editData={editData}
+          getReload={getProjectInfo}
+        />
+      )}
     </>
   );
 };

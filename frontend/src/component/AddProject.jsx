@@ -23,7 +23,7 @@ const style = {
   p: 4,
 };
 
-const AddProject = ({ closeModal }) => {
+const AddProject = ({ closeModal, editData, getReload }) => {
   const { ishaveCompany, setIsHaveCompany, isLoading, setIsLoading } =
     useContext(AuthContext);
 
@@ -39,12 +39,17 @@ const AddProject = ({ closeModal }) => {
     listeteamMember: ["c", "d", "e"],
     teamLead: [],
     teamMember: [],
+    _id: null,
   });
 
   useEffect(() => {
     try {
+      debugger;
       const initalCall = async () => {
         await checkCompanyInfo();
+        // if (editData) {
+        //   setProjectInfo(editData);
+        // }
       };
       initalCall();
     } catch (ex) {
@@ -80,24 +85,29 @@ const AddProject = ({ closeModal }) => {
   };
 
   const handleSend = async () => {
+    debugger;
     try {
       delete projectInfo.listedteamLead;
       delete projectInfo.listeteamMember;
       console.log("project info", projectInfo);
+
       let psotObj = {
         ...projectInfo,
         createdBy: JSON.parse(sessionStorage["auth"])["email"],
         createdOn: new Date().toLocaleDateString(),
+        flag: editData !== undefined ? "Update" : "Add",
       };
 
       const result = await axios.post(
         `${path.apiUrl}/insertProjectInfo`,
         psotObj
       );
+
       if (result.status === 200) {
         closeModal((prev) => ({ ...prev, addProject: false }));
         // toast.success(result.data.message); // Show success message
         showToast(result.data.message, "success");
+        getReload();
       } else {
         closeModal((prev) => ({ ...prev, addProject: false }));
         showToast(result.data.message, "error");
@@ -126,11 +136,20 @@ const AddProject = ({ closeModal }) => {
       }
       setIsHaveCompany(true);
       let obj = response["data"];
+      let isEdit = editData !== undefined;
       setProjectInfo((prev) => ({
         ...prev,
         companyName: obj["companyName"],
         listedteamLead: obj["teamLead"],
         listeteamMember: obj["teamMember"],
+        projectName: isEdit ? editData.projectName : "",
+        projectKey: isEdit ? editData.projectKey : "",
+        projectDescription: isEdit ? editData.projectDescription : "",
+        projectStartDate: isEdit ? editData.projectStartDate : "",
+        projectEndDate: isEdit ? editData.projectEndDate : "",
+        teamLead: isEdit ? editData.teamLead : [],
+        teamMember: isEdit ? editData.teamMember : [],
+        _id: isEdit ? editData._id : null,
       }));
     } catch (ex) {
       console.log("Error in checkCompanyInfo", ex);
@@ -376,7 +395,9 @@ const AddProject = ({ closeModal }) => {
           >
             {projectInfo.listedteamLead.map((option) => (
               <MenuItem key={option} value={option}>
-                <Checkbox checked={projectInfo.teamLead.indexOf(option) > -1} />
+                <Checkbox
+                  checked={projectInfo?.teamLead.indexOf(option) > -1}
+                />
                 <ListItemText primary={option} />
               </MenuItem>
             ))}
@@ -448,7 +469,7 @@ const AddProject = ({ closeModal }) => {
               onClick={handleSend}
               style={{ background: "#333" }}
             >
-              {"Add"}
+              {editData !== undefined ? "Update" : "Add"}
             </Button>
           </Box>
         </Box>

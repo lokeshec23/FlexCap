@@ -295,21 +295,41 @@ app.post('/getTeamDetails', async (req, res) => {
   }
 });
 
+const { ObjectId } = require('mongodb');
+
 app.post('/insertProjectInfo', async (req, res) => {
   try {
-    // Insert a new record
-    let postResult = await db.collection("projectInfo").insertOne(req.body);
-    
-    if (postResult.acknowledged) {
-      res.status(200).send({ success: true, message: "Project information saved successfully." });
-    } else {
-      res.status(500).send({ success: false, message: "Failed to save project information." });
+    const { flag, _id, ...projectData } = req.body; // Extract flag and _id
+    let result;
+
+    if (flag === "Add") {
+      // Insert a new record
+      result = await db.collection("projectInfo").insertOne(projectData);
+
+      if (result.acknowledged) {
+        res.status(200).send({ success: true, message: "Project information saved successfully." });
+      } else {
+        res.status(500).send({ success: false, message: "Failed to save project information." });
+      }
+    } else if (flag === "Update") {
+      // Update the existing record based on _id
+      result = await db.collection("projectInfo").updateOne(
+        { _id: new ObjectId(_id) }, // Find by _id
+        { $set: projectData } // Update with new data
+      );
+
+      if (result.modifiedCount > 0) {
+        res.status(200).send({ success: true, message: "Project information updated successfully." });
+      } else {
+        res.status(500).send({ success: false, message: "Failed to update project information." });
+      }
     }
   } catch (ex) {
     console.log("Error in insertProjectInfo", ex);
     res.status(500).send({ success: false, message: "An error occurred while saving project information." });
   }
 });
+
 
 // API endpoint to find email in teamLead or teamMember arrays
 app.post('/getProjectInfo', async (req, res) => {

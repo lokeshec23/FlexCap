@@ -2,7 +2,8 @@
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
-    margin: 20px; 
+    width: 80%;
+    margin: 20px auto; 
 }
 
 .card-box{
@@ -11,7 +12,11 @@
     border: 1px solid lightgray;
     border-radius: 8px;
     padding: 1rem;
-    width:fit-content;
+    width: 32%;
+}
+
+.card-box:hover{
+    box-shadow: rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;
 }
 
 .cardName-Editbutton{
@@ -23,8 +28,8 @@
 
 .editbtn{
     border: 1px solid #333;
-    padding: 5px 10px;
-    border-radius: 4px;
+    border-radius: 5px;
+    cursor: pointer;
 }
 .line{
     margin: 0.8rem;
@@ -38,4 +43,12 @@
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+    gap:10px;
+}
+
+.card-tl-space{
+    display: flex;
+    flex-wrap: wrap;
+    margin: 10px 0px;
+    gap: 10px;
 }
