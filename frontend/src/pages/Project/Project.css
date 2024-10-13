@@ -19,11 +19,11 @@
     box-shadow: rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;
 }
 
-.cardName-Editbutton{
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap;
+/* For medium screens, make two cards per row */
+@media (max-width: 768px) {
+  .card-box {
+    width: calc(50% - 1rem); /* 2 cards per row with 1rem gap */
+  }
 }
 
 .editbtn{
