@@ -33,8 +33,13 @@ const Project = () => {
   }, []);
 
   const getProjectInfo = async () => {
+    debugger;
     try {
-      let obj = { email: JSON.parse(sessionStorage["auth"])["email"] };
+      let obj = {
+        email:
+          JSON.parse(sessionStorage["auth"])["approvalByID"] ||
+          JSON.parse(sessionStorage["auth"])["email"],
+      };
       const result = await axios.post(`${path.apiUrl}/getProjectInfo`, obj);
       if (result.data.success) {
         setProjectDetails(result.data.project);
@@ -92,12 +97,21 @@ const Project = () => {
           projectDetails.map((card) => {
             return (
               <div key={card._id} className="card-box">
-                <div className="cardName-Editbutton">
+                <div
+                  className="cardName-Editbutton"
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-end",
+                  }}
+                >
                   <p className="card-header">{card.projectName}</p>
-                  <EditIcon
-                    className="editbtn"
-                    onClick={() => handleEdit(card["_id"])}
-                  />
+                  {JSON.parse(sessionStorage["auth"])["isAdmin"] && (
+                    <EditIcon
+                      className="editbtn"
+                      onClick={() => handleEdit(card["_id"])}
+                    />
+                  )}
                 </div>
                 <hr className="line" />
                 <div>
@@ -160,7 +174,7 @@ const Project = () => {
 
   return (
     <>
-      <div style={{ width: "100%", marginTop: "20px" }}>
+      <div style={{ width: "90%", margin: "20px auto" }}>
         <Stack direction="row" spacing={2}>
           {isLoading ? (
             <Skeleton

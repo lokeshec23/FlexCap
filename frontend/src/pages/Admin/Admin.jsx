@@ -167,7 +167,7 @@ const Admin = () => {
 
   return (
     <>
-      <div style={{ width: "100%", marginTop: "20px" }}>
+      <div style={{ width: "90%", margin: "20px auto" }}>
         <Stack direction="row" spacing={2}>
           {isLoading ? (
             <Skeleton

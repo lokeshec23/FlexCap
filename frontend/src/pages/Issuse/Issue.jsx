@@ -1,11 +1,16 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { AuthContext } from "../../context/AuthContext";
 import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import CreateIssue from "@/component/CreateIssue";
 
 const Issue = () => {
   const { isLoading } = useContext(AuthContext);
+  const [modalOpen, setModalOpen] = useState({ issue: false });
 
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
@@ -40,36 +45,62 @@ const Issue = () => {
     { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
   ];
 
+  const handleModalOpen = () => {
+    setModalOpen((prev) => ({ ...prev, issue: true }));
+  };
+
   return (
-    <div style={{ height: 400, width: "100%", marginTop: "20px" }}>
-      {isLoading ? (
-        <Box>
-          {rows.map((_, index) => (
-            <Box
-              key={index}
-              sx={{ display: "flex", gap: 2, mt: 1, width: "100%" }}
+    <>
+      <div style={{ width: "90%", margin: "20px auto" }}>
+        <Stack direction="row" spacing={2}>
+          {isLoading ? (
+            <Skeleton
+              variant="rectangular"
+              width={100}
+              height={40}
+              sx={{ marginBottom: "1rem", borderRadius: "8px" }}
+            />
+          ) : (
+            <Button
+              variant="contained"
+              startIcon={<AddRoundedIcon />}
+              style={{ background: "#333" }}
+              onClick={() => handleModalOpen("companyModal")}
             >
-              <Skeleton variant="rectangular" width={70} height={40} />
-              <Skeleton variant="rectangular" width={130} height={40} />
-              <Skeleton variant="rectangular" width={130} height={40} />
-              <Skeleton variant="rectangular" width={90} height={40} />
-              <Skeleton variant="rectangular" width={160} height={40} />
-            </Box>
-          ))}
-        </Box>
-      ) : (
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 5 },
-            },
-          }}
-          pageSizeOptions={[5, 10]}
-        />
-      )}
-    </div>
+              Create Issuse
+            </Button>
+          )}
+        </Stack>
+        {isLoading ? (
+          <Box>
+            {rows.map((_, index) => (
+              <Box
+                key={index}
+                sx={{ display: "flex", gap: 2, mt: 1, width: "100%" }}
+              >
+                <Skeleton variant="rectangular" width={70} height={40} />
+                <Skeleton variant="rectangular" width={130} height={40} />
+                <Skeleton variant="rectangular" width={130} height={40} />
+                <Skeleton variant="rectangular" width={90} height={40} />
+                <Skeleton variant="rectangular" width={160} height={40} />
+              </Box>
+            ))}
+          </Box>
+        ) : (
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 5 },
+              },
+            }}
+            pageSizeOptions={[5, 10]}
+          />
+        )}
+      </div>
+      {modalOpen.issue && <CreateIssue closeModal={setModalOpen}/>}
+    </>
   );
 };
 

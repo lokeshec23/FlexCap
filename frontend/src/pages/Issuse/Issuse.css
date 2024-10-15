@@ -1,0 +1,32 @@
+.createissuse-header{
+    display: flex;
+    justify-content: space-between;
+}
+
+.createissuse-header-h1{
+    font-size: 1.3rem !important;
+}
+
+.createissuse-body{
+    max-height: 400px;
+    overflow-y: scroll;
+}
+
+.section{
+    width:80%;
+    margin: 10px auto;
+}
+
+.section-h1{
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.section-div{
+    margin-bottom: 20px;
+}
+
+.hrw{
+    border: 1px solid  lightgray;
+    margin-bottom: 20px;
+}
