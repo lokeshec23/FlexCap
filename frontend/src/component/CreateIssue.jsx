@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { TextField, Button, Box } from "@mui/material";
@@ -24,7 +24,13 @@ const style = {
 };
 
 const CreateIssue = ({ closeModal }) => {
-  let projectList = ["A", "B", "C"];
+  const { ishaveCompany, setIsHaveCompany, isLoading, setIsLoading } =
+    useContext(AuthContext);
+  const [path, setPath] = React.useState({ apiUrl: getPort() });
+  const [fullData, setFullData] = useState([]);
+  const [projectList, setProjectList] = useState([]);
+  const [taskOwnnerList, setTaskOwnnerList] = useState([]);
+  // let projectList = [];
   let issueTypes = ["Story", "Bug", "Suggestion", "Improvement"];
   let category = ["Functional", "Non-functional"];
   let statusList = [
@@ -41,7 +47,67 @@ const CreateIssue = ({ closeModal }) => {
   const [issuseInfo, setIssuseInfo] = useState({
     project: "",
     issueTypes: "",
+    taskOwnner: "",
   });
+
+  useEffect(() => {
+    try {
+      const initalCall = async () => {
+        await checkCompanyInfo();
+        // if (editData) {
+        //   setProjectInfo(editData);
+        // }
+      };
+      initalCall();
+    } catch (ex) {
+      console.log(ex);
+    }
+  }, []);
+
+  useEffect(() => {
+    let data = fullData
+      .filter((f) => f.projectName === issuseInfo.project)
+      .map((m) => {
+        return [...m.teamMember, ...m.teamLead];
+      })[0];
+    setTaskOwnnerList(data || []);
+  }, [issuseInfo?.project]);
+
+  const checkCompanyInfo = async () => {
+    try {
+      const response = await axios.post(`${path.apiUrl}/getProjectDetails`, {
+        companyName: JSON.parse(sessionStorage["auth"])["companyName"] || "",
+        createdBy: JSON.parse(sessionStorage["auth"])["email"] || "",
+      });
+
+      if (!response.data) {
+        console.log("Network error");
+        return;
+      }
+      setFullData(response.data);
+      let projectList_ = response.data.map((d) => d.projectName);
+      setProjectList(projectList_);
+      // setIsHaveCompany(true);
+      // let obj = response["data"];
+      // let isEdit = editData !== undefined;
+      // setProjectInfo((prev) => ({
+      //   ...prev,
+      //   companyName: obj["companyName"],
+      //   listedteamLead: obj["teamLead"],
+      //   listeteamMember: obj["teamMember"],
+      //   projectName: isEdit ? editData.projectName : "",
+      //   projectKey: isEdit ? editData.projectKey : "",
+      //   projectDescription: isEdit ? editData.projectDescription : "",
+      //   projectStartDate: isEdit ? editData.projectStartDate : "",
+      //   projectEndDate: isEdit ? editData.projectEndDate : "",
+      //   teamLead: isEdit ? editData.teamLead : [],
+      //   teamMember: isEdit ? editData.teamMember : [],
+      //   _id: isEdit ? editData._id : null,
+      // }));
+    } catch (ex) {
+      console.log("Error in getProjectDetails", ex);
+    }
+  };
 
   const handleClose = () => {
     closeModal((prev) => ({ ...prev, issue: false }));
@@ -51,6 +117,8 @@ const CreateIssue = ({ closeModal }) => {
     const { name, value } = e.target;
     setIssuseInfo((prev) => ({ ...prev, [name]: value }));
   };
+
+  const toSetTaskOewners = () => {};
 
   return (
     <div>
@@ -286,7 +354,7 @@ const CreateIssue = ({ closeModal }) => {
               {/* task owner */}
               <div className="section-div">
                 <p className="section-h1">Task Owner</p>
-                <TextField
+                {/* <TextField
                   id="taskOwnner"
                   label=""
                   variant="standard"
@@ -315,7 +383,47 @@ const CreateIssue = ({ closeModal }) => {
                       },
                     },
                   }}
-                />
+                /> */}
+                <TextField
+                  id="taskOwnner"
+                  select
+                  label=""
+                  name="taskOwnner"
+                  variant="standard"
+                  style={{ width: "100%", marginBottom: "1rem" }}
+                  InputProps={{
+                    sx: {
+                      "&:before": {
+                        borderBottomColor: "#333",
+                      },
+                      "&:after": {
+                        borderBottomColor: "#333",
+                      },
+                      "&:hover:not(.Mui-disabled):before": {
+                        borderBottomColor: "#333",
+                      },
+                    },
+                  }}
+                  InputLabelProps={{
+                    sx: {
+                      color: "#333",
+                      "&.Mui-focused": {
+                        color: "#333",
+                      },
+                    },
+                  }}
+                  SelectProps={{
+                    renderValue: (selected) => selected, // Display selected option as a single value
+                  }}
+                  onChange={handleInputChange}
+                  value={issuseInfo.taskOwnner || ""} // Ensure value is a string for single selection
+                >
+                  {taskOwnnerList.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      <ListItemText primary={option} />
+                    </MenuItem>
+                  ))}
+                </TextField>
               </div>
 
               {/* module */}

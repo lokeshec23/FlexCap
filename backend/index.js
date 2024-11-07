@@ -367,6 +367,23 @@ app.post('/getProjectInfo', async (req, res) => {
   }
 });
 
+app.post('/getProjectDetails', async (req, res) => {
+  try {
+      // Get companyName and email from request body
+      const { companyName, createdBy } = req.body;
+
+      // Query to find projects by companyName or email
+      const projects =  await db.collection("projectInfo").find({
+          $or: [{ companyName }, { createdBy }]
+      }).toArray();
+     
+      res.status(200).json(projects);
+  } catch (error) {
+      console.error('Error fetching project details:', error);
+      res.status(500).json({ message: 'Error fetching project details' });
+  }
+});
+
 
 
 
