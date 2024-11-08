@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -27,6 +27,14 @@ const Header = () => {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const [auth, setAuth] = React.useState(null);
   // const [isLoading, setIsLoading] = React.useState(false);
+  // const [isReloaded, setIsReloaded] = useState(false);
+
+  // useEffect(() => {
+  //   if (!isReloaded) {
+  //     setIsReloaded(true);
+  //     window.location.reload();
+  //   }
+  // }, [isReloaded]);
 
   useEffect(() => {
     getSessionValue();
@@ -237,7 +245,7 @@ const Header = () => {
           </Typography>
           {sessionStorage.getItem("auth") && (
             <>
-              <div>
+              <div style={{ marginLeft: "60px" }}>
                 <ul>
                   {filteredNavList.map((item, index) => (
                     <Typography

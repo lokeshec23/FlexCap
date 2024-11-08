@@ -23,9 +23,10 @@ const style = {
   p: 4,
 };
 
-const CreateIssue = ({ closeModal }) => {
+const CreateIssue = ({ closeModal, editData, getIssuseDetails }) => {
   const { ishaveCompany, setIsHaveCompany, isLoading, setIsLoading } =
     useContext(AuthContext);
+  debugger;
   const [path, setPath] = React.useState({ apiUrl: getPort() });
   const [fullData, setFullData] = useState([]);
   const [projectList, setProjectList] = useState([]);
@@ -65,6 +66,7 @@ const CreateIssue = ({ closeModal }) => {
   }, []);
 
   useEffect(() => {
+    // debugger;
     let data = fullData
       .filter((f) => f.projectName === issuseInfo.project)
       .map((m) => {
@@ -89,21 +91,15 @@ const CreateIssue = ({ closeModal }) => {
       setProjectList(projectList_);
       // setIsHaveCompany(true);
       // let obj = response["data"];
-      // let isEdit = editData !== undefined;
-      // setProjectInfo((prev) => ({
-      //   ...prev,
-      //   companyName: obj["companyName"],
-      //   listedteamLead: obj["teamLead"],
-      //   listeteamMember: obj["teamMember"],
-      //   projectName: isEdit ? editData.projectName : "",
-      //   projectKey: isEdit ? editData.projectKey : "",
-      //   projectDescription: isEdit ? editData.projectDescription : "",
-      //   projectStartDate: isEdit ? editData.projectStartDate : "",
-      //   projectEndDate: isEdit ? editData.projectEndDate : "",
-      //   teamLead: isEdit ? editData.teamLead : [],
-      //   teamMember: isEdit ? editData.teamMember : [],
-      //   _id: isEdit ? editData._id : null,
-      // }));
+      let isEdit = editData !== undefined;
+      if (editData !== undefined) {
+        let final = {
+          ...editData,
+          Status: editData.status,
+          issueTypes: editData.type,
+        };
+        setIssuseInfo(final);
+      }
     } catch (ex) {
       console.log("Error in getProjectDetails", ex);
     }
@@ -118,7 +114,46 @@ const CreateIssue = ({ closeModal }) => {
     setIssuseInfo((prev) => ({ ...prev, [name]: value }));
   };
 
-  const toSetTaskOewners = () => {};
+  // const toSetTaskOewners = () => {};
+
+  const handleSend = async () => {
+    try {
+      // delete projectInfo.listedteamLead;
+      // delete projectInfo.listeteamMember;
+      console.log("issuseInfo info", issuseInfo);
+      debugger;
+      let psotObj = {
+        ...issuseInfo,
+        createdID: JSON.parse(sessionStorage["auth"])["email"],
+        createdName:
+          JSON.parse(sessionStorage["auth"])["firstName"] +
+          " " +
+          JSON.parse(sessionStorage["auth"])["lastName"],
+        companyName: JSON.parse(sessionStorage["auth"])["companyName"] || "",
+        createdOn: new Date().toLocaleDateString(),
+        flag: editData !== undefined ? "Update" : "Add",
+        // flag: "Add",
+      };
+
+      const result = await axios.post(
+        `${path.apiUrl}/insertIssuseInfo`,
+        psotObj
+      );
+
+      if (result.status === 200) {
+        closeModal((prev) => ({ ...prev, issue: false }));
+        // toast.success(result.data.message); // Show success message
+        showToast(result.data.message, "success");
+        // getReload();
+        getIssuseDetails();
+      } else {
+        closeModal((prev) => ({ ...prev, issue: false }));
+        showToast(result.data.message, "error");
+      }
+    } catch (ex) {
+      console.log("Error in handleSend", ex);
+    }
+  };
 
   return (
     <div>
@@ -517,10 +552,10 @@ const CreateIssue = ({ closeModal }) => {
             <Button
               variant="contained"
               color="primary"
-              // onClick={handleSend}
+              onClick={handleSend}
               style={{ background: "#333" }}
             >
-              {"Add"}
+              {editData !== undefined ? "Update" : "Add"}
             </Button>
           </Box>
         </Box>

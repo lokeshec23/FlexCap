@@ -7,6 +7,8 @@ const Dashboard = () => {
   const [path, setPath] = useState({ apiUrl: getPort() });
   const [infoMessage, setInfoMessage] = useState(null);
 
+  
+
   useEffect(() => {
     const initialFunctionCall = async () => {
       await checkCompanyInfo();

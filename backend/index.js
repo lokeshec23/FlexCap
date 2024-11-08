@@ -386,5 +386,71 @@ app.post('/getProjectDetails', async (req, res) => {
 
 
 
+// issuse 
+app.post('/insertIssuseInfo', async (req, res) => {
+  try {
+    const { flag, _id, ...projectData } = req.body; // Extract flag and _id
+    let result;
 
+    if (flag === "Add") {
+      // Insert a new record
+      result = await db.collection("issuseInfo").insertOne(projectData);
 
+      if (result.acknowledged) {
+        res.status(200).send({ success: true, message: "Issuse created saved successfully." });
+      } else {
+        res.status(500).send({ success: false, message: "Failed to create issuse." });
+      }
+    } else if (flag === "Update") {
+      // Update the existing record based on _id
+      result = await db.collection("issuseInfo").updateOne(
+        { _id: new ObjectId(_id) }, // Find by _id
+        { $set: projectData } // Update with new data
+      );
+
+      if (result.modifiedCount > 0) {
+        res.status(200).send({ success: true, message: "Issuse updated successfully." });
+      } else {
+        res.status(500).send({ success: false, message: "Failed to update issuse." });
+      }
+    }
+  } catch (ex) {
+    console.log("Error in Issuse", ex);
+    res.status(500).send({ success: false, message: "An error occurred while saving isuse information." });
+  }
+});
+
+// API endpoint to find email in teamLead or teamMember arrays
+app.post('/getIssuseInfo', async (req, res) => {
+  
+  try {
+    const { email , companyName} = req.body;
+    const project = await db.collection('issuseInfo').find({
+      $or: [
+        { companyName: companyName },
+        { createdID: email }
+      ]
+    }).toArray();
+    console.log("Issuse,", project)
+      if (project) {
+          // If email is found in either array, return the project details
+          return res.status(200).json({
+              success: true,
+              project: project
+          });
+      } else {
+          // If email is not found
+          return res.status(404).json({
+              success: false,
+              message: 'Email not found in any project'
+          });
+      }
+  } catch (error) {
+      // Handle error
+      console.error('Error finding email:', error);
+      return res.status(500).json({
+          success: false,
+          message: 'Server error'
+      });
+  }
+});

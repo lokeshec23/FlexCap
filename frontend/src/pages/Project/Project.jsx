@@ -89,6 +89,7 @@ const Project = () => {
       setModalOpen((prev) => ({ ...prev, addProject: true }));
     }, 0);
   };
+
   const getProjectCard = () => {
     // console.log("prj", projectDetails);
     return (
