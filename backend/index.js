@@ -143,9 +143,9 @@ app.post('/login', async (req, res) => {
 
 app.post('/insertCompanyInfo', async (req, res) => {
   try {
-    const { createdBy, ...companyInfo } = req.body; // Extract the registerEmailId and the rest of the company info
+    const { registerEmailId, createdBy, ...companyInfo } = req.body; // Extract the registerEmailId and the rest of the company info
+    console.log(req.body)
     const filter = { registerEmailId }; // Define the filter to find an existing record
-
     // Check if a company with the same registerEmailId already exists
     let existingCompany = await db.collection("companyInfo").findOne(filter);
 

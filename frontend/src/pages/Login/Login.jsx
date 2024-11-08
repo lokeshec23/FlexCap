@@ -89,7 +89,7 @@ export default function Login() {
           setLoading(false);
           let authData = result.data;
           login(authData); // To set Login user details in session storage
-          navigate("/Dashboard");
+          navigate("/Home");
         }
       } else {
         setLoading(false);

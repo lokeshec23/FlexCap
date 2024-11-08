@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login/Login";
 import Header from "./component/Header/Header";
 import SignUp from "./pages/SignUp/SignUp";
-import Dashboard from "./pages/Dashboad/Dashboard";
+import Home from "./pages/Dashboad/Home";
 import Issuse from "./pages/Issuse/Issue";
 import Admin from "./pages/Admin/Admin";
 import { AuthProvider } from "./context/AuthContext"; // Import the AuthProvider
@@ -19,7 +19,7 @@ const App = () => {
         <Routes>
           <Route exact path="/" element={<Login />} />
           <Route exact path="/signup" element={<SignUp />} />
-          <Route exact path="/Dashboard" element={<Dashboard />} />
+          <Route exact path="/Home" element={<Home />} />
           <Route exact path="/Issues" element={<Issuse />} />
           <Route exact path="/Project" element={<Project />} />
           <Route exact path="/Admin" element={<Admin />} />

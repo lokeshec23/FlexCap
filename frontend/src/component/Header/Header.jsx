@@ -38,14 +38,14 @@ const Header = () => {
 
   useEffect(() => {
     getSessionValue();
-    setSelectedNav(sessionStorage.getItem("navbar") || "Dashboard");
+    setSelectedNav(sessionStorage.getItem("navbar") || "Home");
   }, []);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
   const navigate = useNavigate();
 
-  const navList = ["Dashboard", "Issues", "Project", "Report", "Admin"];
+  const navList = ["Home", "Issues", "Project", "Report", "Admin"];
 
   const getSessionValue = () => {
     try {
@@ -141,10 +141,15 @@ const Header = () => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-      <hr />
-      <MenuItem onClick={handleLogout}>Log Out</MenuItem>
+      {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      <MenuItem onClick={handleMenuClose}>My account</MenuItem> */}
+      {/* <hr /> */}
+      <MenuItem
+        onClick={handleLogout}
+        // style={{ top: "10px", positon: "relative" }}
+      >
+        Log Out
+      </MenuItem>
     </Menu>
   );
 
@@ -245,7 +250,7 @@ const Header = () => {
           </Typography>
           {sessionStorage.getItem("auth") && (
             <>
-              <div style={{ marginLeft: "60px" }}>
+              <div style={{ marginLeft: "25%" }}>
                 <ul>
                   {filteredNavList.map((item, index) => (
                     <Typography
@@ -275,7 +280,7 @@ const Header = () => {
               </div>
               <Box sx={{ flexGrow: 1 }} />
               <Box sx={{ display: { xs: "none", md: "flex" } }}>
-                <IconButton
+                {/* <IconButton
                   size="large"
                   aria-label="show 4 new mails"
                   sx={{ color: "black" }}
@@ -283,8 +288,8 @@ const Header = () => {
                   <Badge badgeContent={4} color="error">
                     <MailIcon />
                   </Badge>
-                </IconButton>
-                <IconButton
+                </IconButton> */}
+                {/* <IconButton
                   size="large"
                   aria-label="show 17 new notifications"
                   sx={{ color: "black" }}
@@ -292,7 +297,7 @@ const Header = () => {
                   <Badge badgeContent={`9+`} color="error">
                     <NotificationsIcon />
                   </Badge>
-                </IconButton>
+                </IconButton> */}
                 <IconButton
                   size="large"
                   edge="end"
@@ -307,7 +312,7 @@ const Header = () => {
                   />
                 </IconButton>
               </Box>
-              <Box sx={{ display: { xs: "flex", md: "none" } }}>
+              {/* <Box sx={{ display: { xs: "flex", md: "none" } }}>
                 <IconButton
                   size="large"
                   aria-label="show more"
@@ -318,7 +323,7 @@ const Header = () => {
                 >
                   <MoreIcon />
                 </IconButton>
-              </Box>{" "}
+              </Box>{" "} */}
             </>
           )}
         </Toolbar>
